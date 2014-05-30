@@ -3,7 +3,7 @@ import sys
 import errno
 import xml.dom.minidom
 import zipfile
-import sh
+from sh import git
  
 def make_sure_path_exists(path):
 	try:
