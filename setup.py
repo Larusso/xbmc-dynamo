@@ -4,6 +4,7 @@ setup(
     name='XBMC-Dynamo',
     version='0.1.0',
     author='M. Endres',
+    author_email='code@tslarusso.de',
     packages=['xbmcdynamo'],
     scripts=['xbmcdynamo/bin/dynamo.py'],
     entry_points={'console_scripts': [
