@@ -4,8 +4,8 @@ class ConfigurationProxy(object):
     def __init__(self):
         super(ConfigurationProxy, self).__init__()
 
-        self.generator_config = GenerateConfig()
-        self.publish_config = PublishConfig()
+        object.__setattr__(self,'generator_config',GenerateConfig())
+        object.__setattr__(self,'publish_config',PublishConfig())
 
     def get_generator_config(self):
         return self.generator_config
@@ -14,17 +14,34 @@ class ConfigurationProxy(object):
         return self.publish_config
 
     def __repr__(self):
-        return "ConfigurationProxy(%r)" % "bla"
+        return "ConfigurationProxy(%r, %r)" % (self.generator_config, self.publish_config)
+
+    def __setattr__(self, name, value):
+        if name == 'execute':
+            object.__setattr__(self,name,value)
+            return
+
+        if name in self.generator_config:
+            setattr(self.generator_config, name, value)
+
+        if name in self.publish_config:
+            setattr(self.publish_config, name, value)
 
 class GenerateConfig(object):
     """docstring for GenerateConfig"""
 
-    output_path = "dist"
-    addons_search_path = "."
-    use_branch = False
+    def __contains__(self, item):
+        return item in self.__dict__
+
+    def __repr__(self):
+        return "output_path: %r, addons_search_path: %r, use_branch: %r" % (self.output_path, self.addons_search_path, self.use_branch)
 
     def __init__(self):
         super(GenerateConfig, self).__init__()
+
+        self.output_path = "dist"
+        self.addons_search_path = "."
+        self.use_branch = False
 
     def set_argparse_attributes(self, parser):
         parser.add_argument('--addons-search-path', '-asp', type=str, default=".", help="path to folder with xbmc addons")
@@ -34,12 +51,17 @@ class GenerateConfig(object):
 class PublishConfig(object):
     """docstring for PublishConfig"""
 
-    publish_branch = 'gh-pages'
-    publish_remote = 'origin'
-    cleanup = False
+    def __contains__(self, item):
+        return item in self.__dict__
+
+    def __repr__(self):
+        return "publish_branch: %r, publish_remote: %r, cleanup: %r" % (self.publish_branch, self.publish_remote, self.cleanup)
 
     def __init__(self):
         super(PublishConfig, self).__init__()
+        self.publish_branch = 'gh-pages'
+        self.publish_remote = 'origin'
+        self.cleanup = False
 
     def set_argparse_attributes(self, parser):
         parser.add_argument('--publish-branch', type=str, default='gh-pages', help='branch to publish to')

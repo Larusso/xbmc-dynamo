@@ -32,7 +32,7 @@ def execute_from_command_line(args=None):
 	configuration = ConfigurationProxy()
 
 	commandParser = argparse.ArgumentParser(description='XBMC repo creator', prog='xbmcdynamo')
-	commandParser.add_argument('--version', action='version', version='%(prog)s 1.0.0')
+	commandParser.add_argument('--version', action='version', version='%(prog)s 0.1.0')
 
 	generator_group = commandParser.add_argument_group('generate', description='repository generator settings')
 	configuration.get_generator_config().set_argparse_attributes(generator_group)
@@ -55,5 +55,7 @@ def execute_from_command_line(args=None):
 	add_addon_parser = subparsers.add_parser('add', help='add addon to repository')
 	add_addon_parser.set_defaults(execute=_add_addon)
 
-	arguments = commandParser.parse_args(args[1:])
+	arguments = commandParser.parse_args(args[1:], namespace=configuration)
+
+	print("ARGUMENTS:", arguments)
 	arguments.execute(arguments)
