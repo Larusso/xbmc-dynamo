@@ -17,7 +17,7 @@ class ConfigurationProxy(object):
         return "ConfigurationProxy(%r, %r)" % (self.generator_config, self.publish_config)
 
     def __setattr__(self, name, value):
-        if name == 'execute':
+        if name == 'execute' or name == 'config':
             object.__setattr__(self,name,value)
             return
 
@@ -34,7 +34,7 @@ class GenerateConfig(object):
         return item in self.__dict__
 
     def __repr__(self):
-        return "output_path: %r, addons_search_path: %r, use_branch: %r" % (self.output_path, self.addons_search_path, self.use_branch)
+        return "GenerateConfig(output_path: %r, addons_search_path: %r, use_branch: %r)" % (self.output_path, self.addons_search_path, self.use_branch)
 
     def __init__(self):
         super(GenerateConfig, self).__init__()
@@ -55,7 +55,7 @@ class PublishConfig(object):
         return item in self.__dict__
 
     def __repr__(self):
-        return "publish_branch: %r, publish_remote: %r, cleanup: %r" % (self.publish_branch, self.publish_remote, self.cleanup)
+        return "PublishConfig(publish_branch: %r, publish_remote: %r, cleanup: %r)" % (self.publish_branch, self.publish_remote, self.cleanup)
 
     def __init__(self):
         super(PublishConfig, self).__init__()
