@@ -1,6 +1,7 @@
 __all__ = ["publish", "generate", "git", "core"]
 
 import argparse
+import os
 import xbmcdynamo
 import xbmcdynamo.generate
 from xbmcdynamo.core import ConfigurationProxy
@@ -30,6 +31,9 @@ def _default(args):
 
 def execute_from_command_line(args=None):
 	configuration = ConfigurationProxy()
+
+	if os.path.exists('config.yaml') and os.path.isfile('config.yaml'):
+		configuration.load_config('config.yaml')
 
 	commandParser = argparse.ArgumentParser(description='XBMC repo creator', prog='xbmcdynamo')
 	commandParser.add_argument('--version', action='version', version='%(prog)s 0.1.0')
@@ -62,3 +66,5 @@ def execute_from_command_line(args=None):
 
 	print("ARGUMENTS:", arguments)
 	arguments.execute(arguments.config)
+
+	arguments.dump_config('config.yaml')

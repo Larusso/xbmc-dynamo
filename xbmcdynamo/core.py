@@ -1,3 +1,5 @@
+from yaml import load, dump, dump_all, Loader, Dumper
+
 
 class ConfigurationProxy(object):
     """docstring for ConfigurationProxy"""
@@ -7,11 +9,23 @@ class ConfigurationProxy(object):
         object.__setattr__(self,'generator_config',GenerateConfig())
         object.__setattr__(self,'publish_config',PublishConfig())
 
-    def get_generator_config(self):
-        return self.generator_config
+    def dump_config(self, config_path):
+        stream = open(config_path, 'w')
+        output = dump({'generate_settings': self.generator_config.__dict__, 'publish_settings': self.publish_config.__dict__}, stream, default_flow_style=False)
+        stream.close()
+        print(output)
 
-    def get_publish_config(self):
-        return self.publish_config
+    def load_config(self, config_path):
+        stream = open(config_path, 'r')
+        config = load(stream)
+
+        if 'generate_settings' in config:
+            self.generator_config.__dict__ = config['generate_settings']
+
+        if 'publish_settings' in config:
+            self.publish_config.__dict__ = config['publish_settings']
+
+        stream.close()
 
     def __repr__(self):
         return "ConfigurationProxy(%r, %r)" % (self.generator_config, self.publish_config)
