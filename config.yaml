@@ -1,0 +1,8 @@
+generate_settings:
+  addons_search_path: sdjaslkdjk
+  output_path: uiuiui
+  use_branch: false
+publish_settings:
+  cleanup: false
+  publish_branch: gh-pages
+  publish_remote: origin

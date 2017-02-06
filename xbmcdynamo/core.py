@@ -13,22 +13,31 @@ class ConfigurationProxy(object):
         stream = open(config_path, 'w')
         output = dump({'generate_settings': self.generator_config.__dict__, 'publish_settings': self.publish_config.__dict__}, stream, default_flow_style=False)
         stream.close()
-        print(output)
+        print("dump_config")
+        print(self)
 
     def load_config(self, config_path):
         stream = open(config_path, 'r')
         config = load(stream)
 
         if 'generate_settings' in config:
-            self.generator_config.__dict__ = config['generate_settings']
+            for key in config['generate_settings'].keys():
+                self[key] = config['generate_settings'][key]
+            #self.generator_config.__dict__ = config['generate_settings']
 
         if 'publish_settings' in config:
             self.publish_config.__dict__ = config['publish_settings']
 
         stream.close()
 
+        print("load_config")
+        print(self)
+
     def __repr__(self):
         return "ConfigurationProxy(%r, %r)" % (self.generator_config, self.publish_config)
+
+    def __setitem__(self,key,value):
+        self.__setattr__(key, value)
 
     def __setattr__(self, name, value):
         if name == 'execute' or name == 'config':
@@ -58,9 +67,9 @@ class GenerateConfig(object):
         self.use_branch = False
 
     def set_argparse_attributes(self, parser):
-        parser.add_argument('--addons-search-path', '-asp', type=str, default=".", help="path to folder with xbmc addons")
+        parser.add_argument('--addons-search-path', '-asp', type=str, default=self.addons_search_path, help="path to folder with xbmc addons")
         parser.add_argument('--use-branch', '-b', action='store_true', help="use current branch name in output path to repository")
-        parser.add_argument('--output-path', '-o', type=str, default="dist", help="the output directory")
+        parser.add_argument('--output-path', '-o', type=str, default=self.output_path, help="the output directory")
         
 class PublishConfig(object):
     """docstring for PublishConfig"""
@@ -73,11 +82,12 @@ class PublishConfig(object):
 
     def __init__(self):
         super(PublishConfig, self).__init__()
+        
         self.publish_branch = 'gh-pages'
         self.publish_remote = 'origin'
         self.cleanup = False
 
     def set_argparse_attributes(self, parser):
-        parser.add_argument('--publish-branch', type=str, default='gh-pages', help='branch to publish to')
-        parser.add_argument('--publish-remote', type=str, default='origin', help='remote to push to')
+        parser.add_argument('--publish-branch', type=str, default=self.publish_branch, help='branch to publish to')
+        parser.add_argument('--publish-remote', type=str, default=self.publish_remote, help='remote to push to')
         parser.add_argument('--cleanup', '-c', action='store_true', help='cleanup working copy and delete artefacts')
